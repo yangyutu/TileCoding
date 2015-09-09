@@ -31,18 +31,19 @@ namespace ReinforcementLearning{
 
 class TileCoding{
 public:
-	TileCoding(int numTilings0, std::vector<double> quantizer0, int);
+	TileCoding(int numTilings0, std::vector<double> generation0, int);
 	~TileCoding(){}
 	double predict(std::vector<double> input);
 	double learn(double learningRate, const std::vector<double>& input, const double& target);			
 	std::vector<std::vector<int>> quantize(const std::vector<double>& input) const;
+        void outputWeight() const;
 private:
 	int numTilings;
         int stateDim;
 	std::vector<double> quantizer;
+        std::vector<double> generalizations;
 	std::vector<int> offset;        
-	std::vector<std::unordered_map<std::vector<int>, double>> weights;
-        
+        std::unordered_map<std::vector<int>, double> weights;
 
 };
 }
