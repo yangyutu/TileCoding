@@ -1,0 +1,95 @@
+#include <iostream>
+#include <cmath>
+#include "TileCoding.h"
+
+using namespace ReinforcementLearning;
+void trainTileCoderSimpleFunc();
+void trainTileCoderWaveFunc();
+int main() {
+    std::vector<int> m1(2),m2(2), m3(2,2);
+    m1[0] = 3;
+    m1[1] = 2;
+    m2[0] = 3;
+    m2[1] = 2;
+    m3[0] = 3;
+    m3[1] = 4;
+    std::unordered_map<std::vector<int>, double> map;
+    map[m1] = 3;
+    std::cout << map[m1] << std::endl;
+    std::cout << map[m2] << std::endl;
+    std::cout << map[m3] << std::endl;
+    map[m2] = 1;
+    map[m3] = 2;
+    std::cout << map[m1] << std::endl;
+    std::cout << map[m2] << std::endl;
+    std::cout << map[m3] << std::endl;
+
+ //   trainTileCoderSimpleFunc();
+    trainTileCoderWaveFunc();
+    return 0;
+}
+
+void trainTileCoderSimpleFunc() {
+    std::vector<double> q(2);
+    q[0] = 0.2;
+    q[1] = 0.2;
+    TileCoding tile(1, q, 2);
+    double errorTotal;
+    for (int iter = 0; iter < 100; iter++) {
+        errorTotal = 0.0;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                double val = (i * i)*0.1 + (j * j)*0.1;
+                std::vector<double> input(2);
+                input[0] = 0.1 * i;
+                input[1] = 0.1 * j;
+                errorTotal += tile.learn(0.1, input, val);
+            }
+        }
+        std::cout << errorTotal << std::endl;
+    }
+
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            double val = (i * i)*0.1 + (j * j)*0.1;
+            std::vector<double> input(2);
+            input[0] = 0.1 * i;
+            input[1] = 0.1 * j;
+            std::cout << input[0] << "\t" << input[1] << "\t" << val << "\t" << tile.predict(input) << std::endl;
+        }
+    }
+}
+
+void trainTileCoderWaveFunc() {
+    std::vector<double> q(2);
+    q[0] = 1.0;
+    q[1] = 1.0;
+    TileCoding tile(8, q, 2);
+    double errorTotal;
+    for (int iter = 0; iter < 100; iter++) {
+        errorTotal = 0.0;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                std::vector<double> input(2);
+                input[0] = 0.1 * i * 2.0 * M_PI;
+                input[1] = 0.1 * j * 2.0 * M_PI;
+                double val = sin(input[0]) + cos(input[1]);
+                
+                errorTotal += tile.learn(0.01, input, val);
+            }
+        }
+        std::cout << errorTotal << std::endl;
+    }
+
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            std::vector<double> input(2);
+            input[0] = 0.1 * i * 2.0 * M_PI;
+            input[1] = 0.1 * j * 2.0 * M_PI;
+            double val = sin(input[0]) + cos(input[1]);
+            std::cout << input[0] << "\t" << input[1] << "\t" << val << "\t" << tile.predict(input) << std::endl;
+        }
+    }
+}
